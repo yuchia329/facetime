@@ -13,7 +13,7 @@ export const config = {
       logLevel: 'warn' as mediasoupTypes.WorkerLogLevel,
       logTags: ['info', 'ice', 'dtls', 'rtp'] as mediasoupTypes.WorkerLogTag[],
       rtcMinPort: 40000,
-      rtcMaxPort: 49999,
+      rtcMaxPort: 40099, // Change this from 49999
     },
 
     routerOptions: {
