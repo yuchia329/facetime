@@ -389,7 +389,7 @@ resource "aws_instance" "app" {
     
     # Used by the frontend and clients
     CLIENT_ORIGIN=https://app.yuchia.dev
-    NEXT_PUBLIC_WS_URL=wss://app.yuchia.dev:4000
+    NEXT_PUBLIC_WS_URL=wss://app.yuchia.dev:4000/ws
     
     # Docker configuration (defaults, will be replaced by GitHub Actions)
     CLIENT_IMAGE=yuchia329/facetime-client:latest
