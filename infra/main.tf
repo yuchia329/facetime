@@ -96,20 +96,20 @@ resource "aws_security_group" "app" {
     cidr_blocks = [var.allowed_ssh_cidr]
   }
 
-  # Next.js frontend
+  # Next.js frontend (HTTP default port)
   ingress {
     description = "Frontend UI"
-    from_port   = 3000
-    to_port     = 3000
+    from_port   = 80
+    to_port     = 80
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  # Node.js / Mediasoup WebSocket signaling
+  # Node.js / Mediasoup WebSocket signaling (Cloudflare supported HTTPS port)
   ingress {
     description = "WebSocket Signaling"
-    from_port   = 4000
-    to_port     = 4000
+    from_port   = 8443
+    to_port     = 8443
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
@@ -170,7 +170,7 @@ resource "cloudflare_record" "app" {
   name    = var.subdomain # "@" = apex, "app" = app.yuchia.dev, etc.
   content = aws_eip.app.public_ip
   type    = "A"
-  proxied = false # Keep false: Cloudflare proxy blocks non-HTTP ports used by Mediasoup/WebSockets
+  proxied = true # Required for HTTPS Edge Certificates in Cloudflare
 }
 
 # ── EC2 Instance ───────────────────────────────────────────────────────────────
@@ -188,7 +188,7 @@ resource "aws_key_pair" "facetime" {
 
 # 3. Optional: Save the private key to a local file so you can use it to SSH
 resource "local_sensitive_file" "private_key" {
-  content         = tls_private_key.facetime_key.private_key_pem
+  content         = tls_private_key.facetime_key.private_key_openssh
   filename        = "${path.module}/facetime.pem"
   file_permission = "0600"
 }
@@ -313,6 +313,8 @@ resource "aws_instance" "app" {
   user_data = <<-EOF
     #!/bin/bash
     set -e
+    export DEBIAN_FRONTEND=noninteractive
+    export NEEDRESTART_MODE=a
     exec > >(tee /var/log/facetime-init.log | logger -t user-data -s 2>/dev/console) 2>&1
 
     echo "[1/4] Installing system packages..."
@@ -346,6 +348,8 @@ resource "aws_instance" "app" {
         restart: always
         network_mode: host
         env_file: .env.prod
+        environment:
+          PORT: "8443"
         logging:
           driver: "json-file"
           options:
@@ -356,7 +360,7 @@ resource "aws_instance" "app" {
         image: $${CLIENT_IMAGE}
         restart: always
         ports:
-          - "3000:3000"
+          - "80:3000"
         env_file: .env.prod
         depends_on:
           - server
@@ -389,7 +393,7 @@ resource "aws_instance" "app" {
     
     # Used by the frontend and clients
     CLIENT_ORIGIN=https://app.yuchia.dev
-    NEXT_PUBLIC_WS_URL=wss://app.yuchia.dev:4000/ws
+    NEXT_PUBLIC_WS_URL=wss://app.yuchia.dev:8443/ws
     
     # Docker configuration (defaults, will be replaced by GitHub Actions)
     CLIENT_IMAGE=yuchia329/facetime-client:latest
