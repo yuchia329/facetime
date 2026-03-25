@@ -105,11 +105,11 @@ resource "aws_security_group" "app" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  # Node.js / Mediasoup WebSocket signaling (Cloudflare supported HTTPS port)
+  # Node.js / Mediasoup WebSocket signaling
   ingress {
     description = "WebSocket Signaling"
-    from_port   = 8443
-    to_port     = 8443
+    from_port   = 4000
+    to_port     = 4000
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
@@ -358,8 +358,6 @@ resource "aws_instance" "app" {
         security_opt:
           - seccomp:unconfined
         env_file: .env.prod
-        environment:
-          PORT: "8443"
         logging:
           driver: "json-file"
           options:
@@ -372,6 +370,8 @@ resource "aws_instance" "app" {
         ports:
           - "80:3000"
         env_file: .env.prod
+        extra_hosts:
+          - "server:host-gateway"
         depends_on:
           - server
         logging:
@@ -404,7 +404,6 @@ COMPOSEEOF
     
     # Used by the frontend and clients
     CLIENT_ORIGIN=https://app.yuchia.dev
-    NEXT_PUBLIC_WS_URL=wss://app.yuchia.dev:8443/ws
     
     # Docker configuration (defaults, will be replaced by GitHub Actions)
     CLIENT_IMAGE=yuchia329/facetime-client:latest
