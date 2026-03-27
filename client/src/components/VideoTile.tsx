@@ -10,6 +10,7 @@ interface VideoTileProps {
   isLocal?: boolean;
   isSpeaking?: boolean;
   isPinned?: boolean;
+  latency?: number;
   onPin?: () => void;
   onUnpin?: () => void;
 }
@@ -22,6 +23,7 @@ export default function VideoTile({
   isLocal = false,
   isSpeaking = false,
   isPinned = false,
+  latency,
   onPin,
   onUnpin,
 }: VideoTileProps) {
@@ -104,6 +106,36 @@ export default function VideoTile({
 
       {/* Local badge */}
       {isLocal && <span className="local-badge">YOU</span>}
+
+      {/* Latency badge */}
+      {latency !== undefined && latency >= 0 && (
+        <span 
+          className="latency-badge"
+          style={{
+            position: 'absolute',
+            top: '8px',
+            right: '8px',
+            backgroundColor: 'rgba(0, 0, 0, 0.6)',
+            color: latency < 100 ? '#4ade80' : latency < 200 ? '#facc15' : '#f87171',
+            padding: '2px 6px',
+            borderRadius: '4px',
+            fontSize: '11px',
+            fontWeight: 600,
+            zIndex: 10,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '4px'
+          }}
+        >
+          <div style={{
+            width: '6px',
+            height: '6px',
+            borderRadius: '50%',
+            backgroundColor: 'currentColor'
+          }} />
+          {latency}ms
+        </span>
+      )}
     </div>
   );
 }

@@ -25,6 +25,7 @@ export interface RemoteParticipant {
     stream: MediaStream;
     isCamPaused?: boolean;
     lastSpokeAt?: number;
+    latency?: number;
 }
 
 export interface ChatMessage {
@@ -47,6 +48,7 @@ export interface UseRoomResult {
     dominantSpeakerId: string | null;
     localLastSpokeAt: number;
     chatMessages: ChatMessage[];
+    networkLatency?: number;
     toggleMic: () => void;
     toggleCam: () => void;
     switchCamera: () => void;
@@ -91,6 +93,7 @@ export function useRoom(
     const [localLastSpokeAt, setLocalLastSpokeAt] = useState(0);
     const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
     const [watchedVideoPeers, setWatchedVideoPeersState] = useState<string[]>([]);
+    const [networkLatency, setNetworkLatency] = useState<number | undefined>(undefined);
     
     const setWatchedVideoPeers = useCallback((newPeers: string[]) => {
         setWatchedVideoPeersState(prev => {
@@ -98,6 +101,38 @@ export function useRoom(
             return newPeers;
         });
     }, []);
+
+    // ─── Latency polling (SFU) ────────────────────────────────────────────────
+    useEffect(() => {
+        if (!isConnected) return;
+        const interval = setInterval(async () => {
+            if (!sendTransportRef.current && !recvTransportRef.current) return;
+            try {
+                // Determine ping using either transport
+                const transport = sendTransportRef.current || recvTransportRef.current;
+                const stats = await transport!.getStats();
+                if (!stats) return; // sometimes getStats throws or returns undefined on closed transport
+                
+                let foundCandidatePair = false;
+                stats.forEach((stat: any) => {
+                    if (stat.type === 'candidate-pair' && stat.state === 'succeeded' && stat.currentRoundTripTime !== undefined) {
+                        setNetworkLatency(Math.round((stat.currentRoundTripTime as number) * 1000));
+                        foundCandidatePair = true;
+                    }
+                });
+
+                // Fallback for Firefox or older browsers where currentRoundTripTime might not be in candidate-pair
+                if (!foundCandidatePair) {
+                    stats.forEach((stat: any) => {
+                        if (stat.type === 'remote-inbound-rtp' && stat.roundTripTime !== undefined) {
+                            setNetworkLatency(Math.round((stat.roundTripTime as number) * 1000));
+                        }
+                    });
+                }
+            } catch (err) {}
+        }, 2000);
+        return () => clearInterval(interval);
+    }, [isConnected]);
 
     // Derive participants array from ref map
     function syncParticipants() {
@@ -595,6 +630,7 @@ export function useRoom(
         dominantSpeakerId,
         localLastSpokeAt,
         chatMessages,
+        networkLatency,
         toggleMic,
         toggleCam,
         switchCamera,

@@ -28,9 +28,9 @@ const RTC_CONFIG: RTCConfiguration = {
 export function useRoomP2P(roomId: string, displayName: string): UseRoomResult {
     const wsRef = useRef<WebSocket | null>(null);
 
-    // peerId → { pc, stream, displayName }
+    // peerId → { pc, stream, displayName, latency }
     const peerConnectionsRef = useRef<
-        Map<string, { pc: RTCPeerConnection; stream: MediaStream; displayName: string }>
+        Map<string, { pc: RTCPeerConnection; stream: MediaStream; displayName: string; latency?: number }>
     >(new Map());
 
     const localStreamRef = useRef<MediaStream | null>(null);
@@ -44,15 +44,54 @@ export function useRoomP2P(roomId: string, displayName: string): UseRoomResult {
     const [error, setError] = useState<string | null>(null);
     const [hasMultipleCameras, setHasMultipleCameras] = useState(false);
     const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
+    const [networkLatency, setNetworkLatency] = useState<number | undefined>(undefined);
+
+    // ─── Latency polling (P2P) ────────────────────────────────────────────────
+    useEffect(() => {
+        if (!isConnected) return;
+        const interval = setInterval(() => {
+            let totalRTT = 0;
+            let count = 0;
+            let latenciesChanged = false;
+
+            const promises = Array.from(peerConnectionsRef.current.values()).map(async (entry) => {
+                try {
+                    const stats = await entry.pc.getStats();
+                    stats.forEach((stat: any) => {
+                        if (stat.type === 'candidate-pair' && stat.state === 'succeeded' && stat.currentRoundTripTime !== undefined) {
+                            const ping = Math.round((stat.currentRoundTripTime as number) * 1000);
+                            if (entry.latency !== ping) {
+                                entry.latency = ping;
+                                latenciesChanged = true;
+                            }
+                            totalRTT += ping;
+                            count++;
+                        }
+                    });
+                } catch (err) {}
+            });
+
+            Promise.all(promises).then(() => {
+                if (count > 0) {
+                    setNetworkLatency(Math.round(totalRTT / count));
+                }
+                if (latenciesChanged) {
+                    syncParticipants();
+                }
+            });
+        }, 2000);
+        return () => clearInterval(interval);
+    }, [isConnected]);
 
     // Sync participants array from ref map
     function syncParticipants() {
         setParticipants(
-            [...peerConnectionsRef.current.entries()].map(([pid, { stream, displayName: dn }]) => ({
+            [...peerConnectionsRef.current.entries()].map(([pid, { stream, displayName: dn, latency }]) => ({
                 peerId: pid,
                 displayName: dn,
                 stream,
                 isCamPaused: false,
+                latency,
             }))
         );
     }
@@ -362,6 +401,7 @@ export function useRoomP2P(roomId: string, displayName: string): UseRoomResult {
         dominantSpeakerId: null,
         localLastSpokeAt: 0,
         chatMessages,
+        networkLatency,
         toggleMic,
         toggleCam,
         switchCamera,

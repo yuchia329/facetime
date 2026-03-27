@@ -31,6 +31,7 @@ export default function RoomP2PPage({ params }: PageProps) {
     dominantSpeakerId,
     localLastSpokeAt,
     chatMessages,
+    networkLatency,
     toggleMic,
     toggleCam,
     switchCamera,
@@ -171,14 +172,14 @@ export default function RoomP2PPage({ params }: PageProps) {
 
   const allGridPeers = participants.map((p) => ({
     peerId: p.peerId, stream: p.stream, displayName: p.displayName,
-    isLocal: false, streamToMatch: p.stream, isCamPaused: p.isCamPaused, lastSpokeAt: p.lastSpokeAt,
+    isLocal: false, streamToMatch: p.stream, isCamPaused: p.isCamPaused, lastSpokeAt: p.lastSpokeAt, latency: p.latency,
   }));
   allGridPeers.sort(sortPeers);
 
   const gridTotalPages = Math.ceil(allGridPeers.length / (gridPageSize - 1)) || 1;
   const safeGridPage = Math.min(gridPage, Math.max(0, gridTotalPages - 1));
   const displayGridPeers = [
-    { peerId: 'local', stream: localStream, displayName, isLocal: true, streamToMatch: localStream, isCamPaused: false, lastSpokeAt: localLastSpokeAt },
+    { peerId: 'local', stream: localStream, displayName, isLocal: true, streamToMatch: localStream, isCamPaused: false, lastSpokeAt: localLastSpokeAt, latency: networkLatency },
     ...allGridPeers.slice(safeGridPage * (gridPageSize - 1), (safeGridPage + 1) * (gridPageSize - 1))
   ];
 
@@ -259,6 +260,7 @@ export default function RoomP2PPage({ params }: PageProps) {
                   isLocal={p.isLocal}
                   isSpeaking={activeSpeakerIds.includes(p.peerId)}
                   isPinned={pinnedUserId === p.peerId}
+                  latency={p.latency}
                   onPin={() => { setPinnedUserId(p.peerId); setLayoutMode('speaker'); }}
                   onUnpin={() => setPinnedUserId(null)}
                 />
@@ -279,6 +281,7 @@ export default function RoomP2PPage({ params }: PageProps) {
                 isLocal={speakerIsLocal}
                 isSpeaking={speakerIsLocal ? activeSpeakerIds.includes('local') : activeSpeakerIds.includes((dominantSpeakerId || participants.find(p => p.stream === speakerStream)?.peerId) || '')}
                 isPinned={speakerIsLocal ? pinnedUserId === 'local' : pinnedUserId === (participants.find(p => p.stream === speakerStream)?.peerId)}
+                latency={speakerIsLocal ? networkLatency : participants.find(p => p.stream === speakerStream)?.latency}
                 onPin={() => { setPinnedUserId(speakerIsLocal ? 'local' : participants.find(p => p.stream === speakerStream)?.peerId || null); setLayoutMode('speaker'); }}
                 onUnpin={() => setPinnedUserId(null)}
               />
@@ -299,6 +302,7 @@ export default function RoomP2PPage({ params }: PageProps) {
                       isCamOff={remoteIsCamOff(p.stream, p.isCamPaused)}
                       isSpeaking={activeSpeakerIds.includes(p.peerId)}
                       isPinned={pinnedUserId === p.peerId}
+                      latency={p.latency}
                       onPin={() => { setPinnedUserId(p.peerId); setLayoutMode('speaker'); }}
                       onUnpin={() => setPinnedUserId(null)}
                     />
@@ -320,6 +324,7 @@ export default function RoomP2PPage({ params }: PageProps) {
                   isLocal
                   isSpeaking={activeSpeakerIds.includes('local')}
                   isPinned={pinnedUserId === 'local'}
+                  latency={networkLatency}
                   onPin={() => { setPinnedUserId('local'); setLayoutMode('speaker'); }}
                   onUnpin={() => setPinnedUserId(null)}
                 />
