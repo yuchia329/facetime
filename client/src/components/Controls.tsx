@@ -58,7 +58,7 @@ export default function Controls({
       <div className="room-info">
         <span className="room-id">#{roomId}</span>
         <span className={`mode-badge mode-badge--${mode}`}>
-          {mode === 'sfu' ? '⚡ SFU' : '🔗 P2P'}
+          {mode === 'sfu' ? 'SFU' : 'P2P'}
         </span>
         <span className="participant-count">
           <span className="dot" /> {participantCount} participant{participantCount !== 1 ? 's' : ''}
@@ -102,29 +102,16 @@ export default function Controls({
           </button>
         )}
 
-        {/* Layout Toggle */}
+        {/* Layout Toggle (Persistent View Button) */}
         <button
           id="btn-toggle-layout"
           className="ctrl-btn"
           onClick={onToggleLayout}
           title={layoutMode === 'grid' ? 'Switch to Speaker View' : 'Switch to Grid View'}
         >
-          <span className="ctrl-icon">{layoutMode === 'grid' ? '🗣️' : '⏹️'}</span>
+          <span className="ctrl-icon">{layoutMode === 'grid' ? '👤' : '👥'}</span>
           <span className="ctrl-label">{layoutMode === 'grid' ? 'Speaker' : 'Grid'}</span>
         </button>
-
-        {/* Filmstrip Toggle (Speaker Mode Only) */}
-        {layoutMode === 'speaker' && onToggleFilmstrip && (
-          <button
-            id="btn-toggle-filmstrip"
-            className="ctrl-btn"
-            onClick={onToggleFilmstrip}
-            title={showFilmstrip ? 'Hide other users' : 'Show other users'}
-          >
-            <span className="ctrl-icon">{showFilmstrip ? '🙈' : '🐵'}</span>
-            <span className="ctrl-label">{showFilmstrip ? 'Hide' : 'Show'}</span>
-          </button>
-        )}
 
         {/* Chat Toggle */}
         <button
@@ -141,17 +128,6 @@ export default function Controls({
               {unreadCount > 99 ? '99+' : unreadCount}
             </span>
           )}
-        </button>
-
-        {/* Copy link */}
-        <button
-          id="btn-copy-link"
-          className="ctrl-btn"
-          onClick={handleCopyLink}
-          title="Copy invite link"
-        >
-          <span className="ctrl-icon">🔗</span>
-          <span className="ctrl-label">Invite</span>
         </button>
 
         {/* Leave */}

@@ -31,15 +31,15 @@ export default function LobbyPage() {
   }
 
   const sfuFeatures = [
-    { icon: '⚡', label: 'Ultra-low latency' },
-    { icon: '🔒', label: 'End-to-end encrypted' },
-    { icon: '👥', label: 'Scales to large groups' },
+    { label: 'Ultra-low latency' },
+    { label: 'End-to-end encrypted' },
+    { label: 'Scales to large groups' },
   ];
 
   const p2pFeatures = [
-    { icon: '🔗', label: 'Direct peer connections' },
-    { icon: '🔒', label: 'End-to-end encrypted' },
-    { icon: '🖥️', label: 'No media server needed' },
+    { label: 'Direct peer connections' },
+    { label: 'End-to-end encrypted' },
+    { label: 'No media server needed' },
   ];
 
   const features = mode === 'sfu' ? sfuFeatures : p2pFeatures;
@@ -54,8 +54,7 @@ export default function LobbyPage() {
       <div className="lobby-card">
         {/* Logo */}
         <div className="lobby-logo">
-          <span className="logo-icon">📹</span>
-          <h1 className="logo-title">FaceTime</h1>
+          <h1 className="logo-title">Facetime</h1>
         </div>
         <p className="lobby-subtitle">
           {mode === 'sfu'
@@ -70,8 +69,7 @@ export default function LobbyPage() {
             className={`mode-btn ${mode === 'sfu' ? 'mode-btn--active' : ''}`}
             onClick={() => setMode('sfu')}
           >
-            <span className="mode-btn-icon">⚡</span>
-            <span className="mode-btn-label">SFU Mode</span>
+            SFU Mode
             <span className="mode-btn-desc">Scalable · Server-routed</span>
           </button>
           <button
@@ -79,8 +77,7 @@ export default function LobbyPage() {
             className={`mode-btn ${mode === 'p2p' ? 'mode-btn--active' : ''}`}
             onClick={() => setMode('p2p')}
           >
-            <span className="mode-btn-icon">🔗</span>
-            <span className="mode-btn-label">P2P Mesh</span>
+            Mesh P2P
             <span className="mode-btn-desc">Direct · Browser-to-browser</span>
           </button>
         </div>
@@ -146,10 +143,9 @@ export default function LobbyPage() {
         </form>
 
         <div className="lobby-features">
-          {features.map((f) => (
-            <div key={f.label} className="feature">
-              <span className="feature-icon">{f.icon}</span>
-              <span>{f.label}</span>
+          {features.map((f, idx) => (
+            <div key={idx} className="feature">
+              <span className="feature-label">{f.label}</span>
             </div>
           ))}
         </div>

@@ -240,9 +240,10 @@ export default function RoomPage({ params }: PageProps) {
     }
     if (envP && sourceP) {
       if (count === 1) return { c: 1, r: 1 };
-      if (count === 2) return { c: 2, r: 1 };
-      if (count <= 4) return { c: 2, r: 2 };
-      if (count <= 6) return { c: 3, r: 2 };
+      if (count === 2) return { c: 1, r: 2 };
+      if (count === 3) return { c: 1, r: 3 };
+      if (count === 4) return { c: 2, r: 2 };
+      if (count <= 6) return { c: 2, r: 3 };
       if (count <= 9) return { c: 3, r: 3 };
       if (count <= 12) return { c: 3, r: 4 };
       return { c: 3, r: Math.ceil(count / 3) };
@@ -284,11 +285,11 @@ export default function RoomPage({ params }: PageProps) {
     return (
       <div className="error-screen">
         <div className="error-card">
-          <span className="error-icon">⚠️</span>
-          <h2>Connection Error</h2>
+          <span className="error-icon">Error:</span>
+          <h2>Connection Failed</h2>
           <p>{error}</p>
-          <button className="btn btn-primary" onClick={() => router.push('/')}>
-            ← Back to Lobby
+          <button className="btn btn-primary" onClick={() => window.location.href = '/'}>
+            Return Home
           </button>
         </div>
       </div>

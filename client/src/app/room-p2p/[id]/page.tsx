@@ -190,12 +190,37 @@ export default function RoomP2PPage({ params }: PageProps) {
       if (count <= 4) return { c: 2, r: 2 };
       if (count <= 6) return { c: 3, r: 2 };
       if (count <= 9) return { c: 3, r: 3 };
+      if (count <= 12) return { c: 4, r: 3 };
       return { c: 4, r: Math.ceil(count / 4) };
     }
+    if (envP && !sourceP) {
+      if (count === 1) return { c: 1, r: 1 };
+      if (count === 2) return { c: 1, r: 2 };
+      if (count === 3) return { c: 1, r: 3 };
+      if (count === 4) return { c: 2, r: 2 }; 
+      if (count <= 6) return { c: 2, r: 3 }; 
+      if (count <= 8) return { c: 2, r: 4 }; 
+      if (count <= 12) return { c: 2, r: 6 }; 
+      return { c: 2, r: Math.ceil(count / 2) };
+    }
+    if (envP && sourceP) {
+      if (count === 1) return { c: 1, r: 1 };
+      if (count === 2) return { c: 1, r: 2 };
+      if (count === 3) return { c: 1, r: 3 };
+      if (count === 4) return { c: 2, r: 2 };
+      if (count <= 6) return { c: 2, r: 3 };
+      if (count <= 9) return { c: 3, r: 3 };
+      if (count <= 12) return { c: 3, r: 4 };
+      return { c: 3, r: Math.ceil(count / 3) };
+    }
+    // (!envP && sourceP)
     if (count === 1) return { c: 1, r: 1 };
     if (count === 2) return { c: 2, r: 1 };
-    if (count <= 4) return { c: 2, r: 2 };
-    return { c: 3, r: Math.ceil(count / 3) };
+    if (count <= 4) return { c: 4, r: 1 };
+    if (count <= 6) return { c: 6, r: 1 };
+    if (count <= 8) return { c: 4, r: 2 };
+    if (count <= 12) return { c: 6, r: 2 };
+    return { c: 6, r: Math.ceil(count / 6) };
   };
 
   const gridDims = getGridDimensions(displayGridPeers.length, isPortrait, sourceOrientation === 'portrait');

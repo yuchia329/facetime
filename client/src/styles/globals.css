@@ -48,42 +48,7 @@ html, body {
   padding: 24px;
 }
 
-/* Ambient background orbs */
-.orb {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(80px);
-  opacity: 0.25;
-  pointer-events: none;
-}
-.orb-1 {
-  width: 500px; height: 500px;
-  background: radial-gradient(circle, #6c63ff, transparent 70%);
-  top: -120px; left: -100px;
-  animation: float1 12s ease-in-out infinite;
-}
-.orb-2 {
-  width: 400px; height: 400px;
-  background: radial-gradient(circle, #4facfe, transparent 70%);
-  bottom: -80px; right: -80px;
-  animation: float2 15s ease-in-out infinite;
-}
-.orb-3 {
-  width: 350px; height: 350px;
-  background: radial-gradient(circle, #ff4d6a, transparent 70%);
-  top: 40%; left: 60%;
-  animation: float1 18s ease-in-out infinite reverse;
-}
-
-@keyframes float1 {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  33%  { transform: translate(40px, -30px) scale(1.05); }
-  66%  { transform: translate(-20px, 20px) scale(0.97); }
-}
-@keyframes float2 {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  50%  { transform: translate(-30px, -40px) scale(1.08); }
-}
+/* Ambient background orbs removed */
 
 /* Lobby card */
 .lobby-card {
@@ -110,10 +75,7 @@ html, body {
 .logo-title {
   font-size: 28px;
   font-weight: 700;
-  background: linear-gradient(135deg, #ffffff 0%, #a09bff 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--text-primary);
 }
 .lobby-subtitle {
   color: var(--text-secondary);
@@ -170,13 +132,13 @@ html, body {
 }
 .btn:disabled { opacity: 0.45; cursor: not-allowed; }
 .btn-primary {
-  background: linear-gradient(135deg, var(--accent), #4facfe);
+  background: var(--accent);
   color: white;
-  box-shadow: 0 4px 20px var(--accent-glow);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 .btn-primary:not(:disabled):hover {
-  background: linear-gradient(135deg, var(--accent-hover), #5fbfff);
-  box-shadow: 0 6px 28px var(--accent-glow);
+  background: var(--accent-hover);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.2);
   transform: translateY(-1px);
 }
 .btn-secondary {
@@ -238,7 +200,7 @@ html, body {
   justify-content: center;
   gap: 10px;
   padding: 10px;
-  background: linear-gradient(90deg, var(--accent), #4facfe);
+  background: var(--accent);
   font-size: 14px;
   font-weight: 500;
   color: white;
@@ -451,7 +413,7 @@ html, body {
 .avatar-letter {
   width: 80px; height: 80px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--accent), #4facfe);
+  background: var(--accent);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -466,7 +428,7 @@ html, body {
   position: absolute;
   bottom: 0; left: 0; right: 0;
   padding: 28px 12px 10px;
-  background: linear-gradient(transparent, rgba(0,0,0,0.65));
+  background: rgba(0,0,0,0.5);
   display: flex;
   align-items: center;
   gap: 8px;

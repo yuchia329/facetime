@@ -73,11 +73,11 @@ export default function VideoTile({
         <div className="tile-pin-controls">
           {isPinned ? (
             <button className="btn-pin btn-unpin" onClick={onUnpin} title="Unpin from center">
-              📍 Unpin
+              Unpin
             </button>
           ) : (
             <button className="btn-pin" onClick={onPin} title="Pin to center">
-              📌 Pin
+              Pin
             </button>
           )}
         </div>
@@ -97,7 +97,7 @@ export default function VideoTile({
         <span className="participant-name">{isLocal ? `${displayName} (You)` : displayName}</span>
         {isMuted && (
           <span className="mute-badge" title="Muted">
-            🔇
+            Muted
           </span>
         )}
       </div>

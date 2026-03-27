@@ -31,8 +31,8 @@ export function ChatPanel({ messages, isOpen, onClose, onSend }: ChatPanelProps)
     <div className={`chat-panel ${isOpen ? 'chat-panel--open' : ''}`}>
       <div className="chat-header">
         <h3>Room Chat</h3>
-        <button type="button" className="chat-close-btn" onClick={onClose} title="Close Chat">
-          ✖
+        <button className="chat-close-btn" onClick={onClose} aria-label="Close Chat">
+          Close
         </button>
       </div>
 
@@ -69,8 +69,13 @@ export function ChatPanel({ messages, isOpen, onClose, onSend }: ChatPanelProps)
           className="chat-input"
           autoComplete="off"
         />
-        <button type="submit" className="chat-send-btn" disabled={!text.trim()}>
-          ➤
+        <button
+          type="submit"
+          className="chat-send-btn"
+          disabled={!text.trim()}
+          aria-label="Send"
+        >
+          Send
         </button>
       </form>
     </div>
