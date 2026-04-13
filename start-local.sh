@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # ==============================================================================
-# Facetime - Unified Local Development Server Script
+# Hubstream - Unified Local Development Server Script
 # ==============================================================================
 # This script automatically determines your local network IP, sets up the
 # Mediasoup SFU environment variables, starts an ngrok tunnel for public access,
@@ -16,7 +16,7 @@ RED='\033[0;31m'
 NC='\033[0m' # No Color
 
 echo -e "${BLUE}======================================================${NC}"
-echo -e "${BLUE}      Starting Facetime Local Development Setup       ${NC}"
+echo -e "${BLUE}      Starting Hubstream Local Development Setup       ${NC}"
 echo -e "${BLUE}======================================================${NC}"
 
 # Clean up any previously running servers/tunnels on our ports

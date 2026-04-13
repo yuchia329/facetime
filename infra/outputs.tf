@@ -20,7 +20,7 @@ output "app_url_ip" {
 
 output "ssh_command" {
   description = "SSH command to connect to the EC2 instance"
-  value       = "ssh -i ~/.ssh/facetime ubuntu@${aws_eip.app.public_ip}"
+  value       = "ssh -i ~/.ssh/hubstream ubuntu@${aws_eip.app.public_ip}"
 }
 
 output "websocket_url" {

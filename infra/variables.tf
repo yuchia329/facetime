@@ -7,7 +7,7 @@ variable "aws_region" {
 variable "project_name" {
   description = "Name prefix applied to all created resources"
   type        = string
-  default     = "facetime"
+  default     = "hubstream"
 }
 
 variable "environment" {
@@ -40,8 +40,8 @@ variable "ami_id" {
 variable "key_pair_name" {
   description = "Name of an existing EC2 Key Pair to enable SSH access"
   type        = string
-  # Create with: ssh-keygen -t rsa -b 4096 -f ~/.ssh/facetime
-  # Then import to AWS: aws ec2 import-key-pair --key-name facetime --public-key-material fileb://~/.ssh/facetime.pub
+  # Create with: ssh-keygen -t rsa -b 4096 -f ~/.ssh/hubstream
+  # Then import to AWS: aws ec2 import-key-pair --key-name hubstream --public-key-material fileb://~/.ssh/hubstream.pub
 }
 
 variable "allowed_ssh_cidr" {
@@ -70,7 +70,7 @@ variable "domain_name" {
 }
 
 variable "subdomain" {
-  description = "Subdomain for the A record ('facetime' → facetime.yuchia.dev, '@' → apex yuchia.dev)"
+  description = "Subdomain for the A record ('hubstream' → hubstream.yuchia.dev, '@' → apex yuchia.dev)"
   type        = string
-  default     = "facetime"
+  default     = "hubstream"
 }

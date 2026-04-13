@@ -1,5 +1,5 @@
 # ==============================================================================
-# Facetime — AWS Infrastructure
+# Hubstream — AWS Infrastructure
 # ==============================================================================
 # Resources provisioned:
 #   - VPC + public subnet + internet gateway
@@ -84,7 +84,7 @@ resource "aws_route_table_association" "public" {
 
 resource "aws_security_group" "app" {
   name        = "${var.project_name}-sg"
-  description = "Facetime SFU security group"
+  description = "Hubstream SFU security group"
   vpc_id      = aws_vpc.main.id
 
   # SSH
@@ -167,7 +167,7 @@ locals {
 
 resource "cloudflare_record" "app" {
   zone_id = var.cloudflare_zone_id
-  name    = var.subdomain # "@" = apex, "facetime" = facetime.yuchia.dev, etc.
+  name    = var.subdomain # "@" = apex, "hubstream" = hubstream.yuchia.dev, etc.
   content = aws_eip.app.public_ip
   type    = "A"
   proxied = true # Required for HTTPS Edge Certificates in Cloudflare
@@ -176,20 +176,20 @@ resource "cloudflare_record" "app" {
 # ── EC2 Instance ───────────────────────────────────────────────────────────────
 
 # 1. Generate a new private key
-resource "tls_private_key" "facetime_key" {
+resource "tls_private_key" "hubstream_key" {
   algorithm = "ED25519"
 }
 
 # 2. Create the AWS Key Pair using that generated public key
-resource "aws_key_pair" "facetime" {
-  key_name   = "facetime"
-  public_key = tls_private_key.facetime_key.public_key_openssh
+resource "aws_key_pair" "hubstream" {
+  key_name   = "hubstream"
+  public_key = tls_private_key.hubstream_key.public_key_openssh
 }
 
 # 3. Optional: Save the private key to a local file so you can use it to SSH
 resource "local_sensitive_file" "private_key" {
-  content         = tls_private_key.facetime_key.private_key_openssh
-  filename        = "${path.module}/facetime.pem"
+  content         = tls_private_key.hubstream_key.private_key_openssh
+  filename        = "${path.module}/hubstream.pem"
   file_permission = "0600"
 }
 
@@ -248,7 +248,7 @@ resource "aws_iam_role" "github_actions_role" {
         }
         Condition = {
           StringLike = {
-            "token.actions.githubusercontent.com:sub" : "repo:yuchia329/facetime:*" # replace yuchia329 with your github username
+            "token.actions.githubusercontent.com:sub" : "repo:yuchia329/hubstream:*" # replace yuchia329 with your github username
           }
           StringEquals = {
             "token.actions.githubusercontent.com:aud" : "sts.amazonaws.com"
@@ -323,7 +323,7 @@ resource "aws_instance" "app" {
     set -e
     export DEBIAN_FRONTEND=noninteractive
     export NEEDRESTART_MODE=a
-    exec > >(tee /var/log/facetime-init.log | logger -t user-data -s 2>/dev/console) 2>&1
+    exec > >(tee /var/log/hubstream-init.log | logger -t user-data -s 2>/dev/console) 2>&1
 
     echo "[1/4] Installing system packages..."
     apt-get update -y
@@ -345,8 +345,8 @@ resource "aws_instance" "app" {
     usermod -aG docker ubuntu
 
     echo "[4/4] Setting up persistent application configuration..."
-    mkdir -p /opt/facetime
-    cd /opt/facetime
+    mkdir -p /opt/hubstream
+    cd /opt/hubstream
 
     # Write the docker-compose file
     cat > docker-compose.prod.yml <<'COMPOSEEOF'
@@ -387,12 +387,12 @@ COMPOSEEOF
     # CREATE THE PER-BOOT SCRIPT
     # Everything below this line will execute on EVERY boot, reboot, or stop/start
     # ------------------------------------------------------------------------------
-    cat > /var/lib/cloud/scripts/per-boot/01-start-facetime.sh <<'BOOTEOF'
+    cat > /var/lib/cloud/scripts/per-boot/01-start-hubstream.sh <<'BOOTEOF'
     #!/bin/bash
-    exec > >(tee /var/log/facetime-per-boot.log | logger -t per-boot -s 2>/dev/console) 2>&1
+    exec > >(tee /var/log/hubstream-per-boot.log | logger -t per-boot -s 2>/dev/console) 2>&1
     echo "Running per-boot startup script..."
 
-    cd /opt/facetime
+    cd /opt/hubstream
 
    # 1. Fetch metadata fresh on every boot for Mediasoup's WebRTC announcedIp
     TOKEN=$(curl -X PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 21600" -s)
@@ -410,8 +410,8 @@ COMPOSEEOF
     CLIENT_ORIGIN=https://${local.fqdn}
     
     # Docker configuration (defaults, will be replaced by GitHub Actions)
-    CLIENT_IMAGE=yuchia329/facetime-client:latest #REPLACE THIS with your DockerHub repository
-    SERVER_IMAGE=yuchia329/facetime-server:latest #REPLACE THIS with your DockerHub repository
+    CLIENT_IMAGE=yuchia329/hubstream-client:latest #REPLACE THIS with your DockerHub repository
+    SERVER_IMAGE=yuchia329/hubstream-server:latest #REPLACE THIS with your DockerHub repository
 ENVEOF
 
     # 3. Pull the absolute latest image from Docker Hub and start the container
@@ -420,12 +420,12 @@ ENVEOF
 BOOTEOF
 
     # Make the per-boot script executable
-    chmod +x /var/lib/cloud/scripts/per-boot/01-start-facetime.sh
+    chmod +x /var/lib/cloud/scripts/per-boot/01-start-hubstream.sh
 
     # Execute it manually right now to handle the very first boot
-    /var/lib/cloud/scripts/per-boot/01-start-facetime.sh
+    /var/lib/cloud/scripts/per-boot/01-start-hubstream.sh
 
-    echo "Facetime server initialization complete."
+    echo "Hubstream server initialization complete."
   EOF
 
   tags = {

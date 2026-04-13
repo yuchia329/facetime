@@ -1,4 +1,4 @@
-# Facetime Server (Mediasoup)
+# Hubstream Server (Mediasoup)
 
 The backend is a high-performance **Node.js** signaling and media server utilizing the **Mediasoup** C++ engine.
 

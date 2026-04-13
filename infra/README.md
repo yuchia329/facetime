@@ -1,6 +1,6 @@
 # Infrastructure As Code (Terraform)
 
-This directory contains the **Terraform** blueprint to deploy the Facetime stack to AWS. It is 100% automated and capable of provisioning the VPC, firewall rules, active EC2 server, and DNS routing with a single command.
+This directory contains the **Terraform** blueprint to deploy the Hubstream stack to AWS. It is 100% automated and capable of provisioning the VPC, firewall rules, active EC2 server, and DNS routing with a single command.
 
 ## Architecture Overview
 

@@ -2,8 +2,8 @@ version: '3.9'
 
 services:
   server:
-    image: yuchia329/facetime-server:1 # Use your manually built image
-    container_name: facetime-server
+    image: yuchia329/hubstream-server:1 # Use your manually built image
+    container_name: hubstream-server
     security_opt:
       - seccomp:unconfined
     ports:
@@ -17,11 +17,11 @@ services:
       - CLIENT_ORIGIN=http://localhost:3000
     restart: unless-stopped
     networks:
-      - facetime-net
+      - hubstream-net
 
   client:
-    image: yuchia329/facetime-client:1 # Use your manually built image
-    container_name: facetime-client
+    image: yuchia329/hubstream-client:1 # Use your manually built image
+    container_name: hubstream-client
     ports:
       - '3000:3000'
     environment:
@@ -30,8 +30,8 @@ services:
       - server
     restart: unless-stopped
     networks:
-      - facetime-net
+      - hubstream-net
 
 networks:
-  facetime-net:
+  hubstream-net:
     driver: bridge

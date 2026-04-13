@@ -1,10 +1,10 @@
-# Facetime WebRTC Clone
+# Hubstream WebRTC Clone
 
 A full-stack, scalable video conferencing application built with **Next.js**, **Node.js**, **Mediasoup**, and **Terraform AWS**.
 
 This repository is designed to demonstrate high-performance real-time video streaming capabilities. It elegantly supports both peer-to-peer (P2P) mesh networking for small rooms, and Selective Forwarding Unit (SFU) topologies via a dedicated media backend for large-scale enterprise meetings.
 
-![Facetime App](https://raw.githubusercontent.com/yuchia329/facetime/main/screenshot.png) *(Preview placeholder)*
+![Hubstream App](https://raw.githubusercontent.com/yuchia329/hubstream/main/screenshot.png) *(Preview placeholder)*
 
 ## Repository Structure
 
@@ -26,8 +26,8 @@ The project is structured across three primary directories:
 You do **not** need Docker to run this application locally! Simply clone the repository and run the unified startup script:
 
 ```bash
-git clone https://github.com/yuchia329/facetime.git
-cd facetime
+git clone https://github.com/yuchia329/hubstream.git
+cd hubstream
 
 # Safely installs dependencies and intelligently boots BOTH the client and server!
 ./start-local.sh

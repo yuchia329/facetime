@@ -54,7 +54,7 @@ export default function LobbyPage() {
       <div className="lobby-card">
         {/* Logo */}
         <div className="lobby-logo">
-          <h1 className="logo-title">Facetime</h1>
+          <h1 className="logo-title">Hubstream</h1>
         </div>
         <p className="lobby-subtitle">
           {mode === 'sfu'
@@ -152,7 +152,7 @@ export default function LobbyPage() {
 
         <div className="lobby-footer" style={{ textAlign: 'center', marginTop: '1.5rem' }}>
           <a
-            href="https://github.com/yuchia329/facetime"
+            href="https://github.com/yuchia329/hubstream"
             target="_blank"
             rel="noopener noreferrer"
             style={{ color: 'var(--text-secondary, #94a3b8)', textDecoration: 'none', fontSize: '0.875rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}

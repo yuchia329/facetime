@@ -10,7 +10,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: 'FaceTime – WebRTC Video Chat',
+  title: 'HubStream – WebRTC Video Chat',
   description: 'Real-time multi-party video chat powered by WebRTC SFU',
   keywords: ['video chat', 'WebRTC', 'real-time', 'conference'],
 };

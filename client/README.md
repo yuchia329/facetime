@@ -1,4 +1,4 @@
-# Facetime Client (Next.js)
+# Hubstream Client (Next.js)
 
 The client application is a modern, responsive WebRTC frontend built with **Next.js 15**, **React**, and **TypeScript**. It provides the user interface for both creating and joining video conference rooms.
 

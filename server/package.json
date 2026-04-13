@@ -1,5 +1,5 @@
 {
-  "name": "facetime-server",
+  "name": "hubstream-server",
   "version": "1.0.0",
   "description": "WebRTC SFU signaling server (mediasoup)",
   "main": "dist/index.js",

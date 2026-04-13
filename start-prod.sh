@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # ==============================================================================
-# Facetime - AWS EC2 Production Deployment Script
+# Hubstream - AWS EC2 Production Deployment Script
 # ==============================================================================
 # This scripts configures and launches the app for a production environment.
 # It automatically queries the AWS EC2 Metadata API (IMDSv2) to bind the correct
@@ -15,7 +15,7 @@ RED='\033[0;31m'
 NC='\033[0m'
 
 echo -e "${BLUE}======================================================${NC}"
-echo -e "${BLUE}      Starting Facetime AWS Production Setup          ${NC}"
+echo -e "${BLUE}      Starting Hubstream AWS Production Setup          ${NC}"
 echo -e "${BLUE}======================================================${NC}"
 
 # 1. Get EC2 Public IP using IMDSv2

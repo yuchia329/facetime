@@ -16,7 +16,7 @@ terraform {
   # Uncomment and fill in your bucket/key when ready.
   # backend "s3" {
   #   bucket = "your-tfstate-bucket"
-  #   key    = "facetime/terraform.tfstate"
+  #   key    = "hubstream/terraform.tfstate"
   #   region = "us-east-1"
   # }
 }

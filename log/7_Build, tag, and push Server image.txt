@@ -1,6 +1,6 @@
 ﻿2026-03-24T00:58:08.1298607Z ##[group]Run docker buildx build --platform linux/arm64 \
 2026-03-24T00:58:08.1299060Z [36;1mdocker buildx build --platform linux/arm64 \[0m
-2026-03-24T00:58:08.1299480Z [36;1m  --push -t $DOCKERHUB_USERNAME/facetime-server:$IMAGE_TAG ./server[0m
+2026-03-24T00:58:08.1299480Z [36;1m  --push -t $DOCKERHUB_USERNAME/hubstream-server:$IMAGE_TAG ./server[0m
 2026-03-24T00:58:08.1348584Z shell: /usr/bin/bash -e {0}
 2026-03-24T00:58:08.1348828Z env:
 2026-03-24T00:58:08.1349077Z   DOCKERHUB_USERNAME: ***
