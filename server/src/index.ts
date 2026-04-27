@@ -3,6 +3,8 @@ import http from 'http';
 import express from 'express';
 import cors from 'cors';
 import { WebSocketServer } from 'ws';
+import fs from 'fs';
+import path from 'path';
 import { config } from './config';
 import { getWorker } from './sfu/worker';
 import { handleConnection } from './signaling/wsHandler';
@@ -21,6 +23,18 @@ async function main(): Promise<void> {
     res.json({ status: 'ok', timestamp: new Date().toISOString() });
   });
 
+  // Visitor log helper
+  const logVisitorEvent = (ip: string | string[] | undefined, mode: string, eventType: string) => {
+    const timestamp = new Date().toISOString();
+    const logDir = path.join(__dirname, '..', 'log');
+    if (!fs.existsSync(logDir)) {
+      fs.mkdirSync(logDir, { recursive: true });
+    }
+    const logFile = path.join(logDir, 'visitors.log');
+    const resolvedIp = Array.isArray(ip) ? ip[0] : (ip || 'unknown');
+    fs.appendFileSync(logFile, `${timestamp} - IP: ${resolvedIp} - Mode: ${mode} - Event: ${eventType}\n`);
+  };
+
   const server = http.createServer(app);
 
   // Use noServer mode for both WSS instances, then manually route upgrades by path.
@@ -31,16 +45,24 @@ async function main(): Promise<void> {
   wss.on('connection', (ws: any, req) => {
     ws.isAlive = true;
     ws.on('pong', () => { ws.isAlive = true; });
-    const ip = req.socket.remoteAddress;
+    const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
     console.log(`🟢 New SFU WebSocket connection from [${ip}]`);
+    
+    logVisitorEvent(ip, 'SFU', 'JOIN');
+    ws.on('close', () => { logVisitorEvent(ip, 'SFU', 'LEAVE'); });
+
     handleConnection(ws);
   });
 
   wssP2P.on('connection', (ws: any, req) => {
     ws.isAlive = true;
     ws.on('pong', () => { ws.isAlive = true; });
-    const ip = req.socket.remoteAddress;
+    const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
     console.log(`🟩 New P2P WebSocket connection from [${ip}]`);
+
+    logVisitorEvent(ip, 'P2P', 'JOIN');
+    ws.on('close', () => { logVisitorEvent(ip, 'P2P', 'LEAVE'); });
+
     handleP2PConnection(ws);
   });
 

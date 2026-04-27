@@ -18,6 +18,8 @@ services:
     restart: unless-stopped
     networks:
       - hubstream-net
+    volumes:
+      - ./log:/app/log
 
   client:
     image: yuchia329/hubstream-client:1 # Use your manually built image
