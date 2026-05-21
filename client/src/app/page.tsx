@@ -1,188 +1,307 @@
-'use client';
+"use client";
 
-import { useState, FormEvent } from 'react';
-import { useRouter } from 'next/navigation';
-import { v4 as uuidv4 } from 'uuid';
+import { useState, FormEvent } from "react";
+import { useRouter } from "next/navigation";
+import { v4 as uuidv4 } from "uuid";
 
-type Mode = 'sfu' | 'p2p';
+type Mode = "sfu" | "p2p";
 
 export default function LobbyPage() {
   const router = useRouter();
-  const [displayName, setDisplayName] = useState('');
-  const [roomId, setRoomId] = useState('');
+  const [displayName, setDisplayName] = useState("");
+  const [roomId, setRoomId] = useState("");
   const [isJoining, setIsJoining] = useState(false);
-  const [mode, setMode] = useState<Mode>('sfu');
+  const [mode, setMode] = useState<Mode>("sfu");
 
-  const basePath = mode === 'sfu' ? '/room' : '/room-p2p';
+  const basePath = mode === "sfu" ? "/room" : "/room-p2p";
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
     if (!displayName.trim()) return;
     setIsJoining(true);
     const room = roomId.trim() || uuidv4().slice(0, 8);
-    router.push(`${basePath}/${room}?name=${encodeURIComponent(displayName.trim())}`);
+    router.push(
+      `${basePath}/${room}?name=${encodeURIComponent(displayName.trim())}`,
+    );
   }
 
   const sfuFeatures = [
-    { label: 'Ultra-low latency' },
-    { label: 'End-to-end encrypted' },
-    { label: 'Scales to large groups' },
+    { label: "Ultra-low latency" },
+    { label: "End-to-end encrypted" },
+    { label: "Scales to large groups" },
   ];
 
   const p2pFeatures = [
-    { label: 'Direct peer connections' },
-    { label: 'End-to-end encrypted' },
-    { label: 'No media server needed' },
+    { label: "Direct peer connections" },
+    { label: "End-to-end encrypted" },
+    { label: "No media server needed" },
   ];
 
-  const features = mode === 'sfu' ? sfuFeatures : p2pFeatures;
+  const features = mode === "sfu" ? sfuFeatures : p2pFeatures;
 
   return (
-    <main className="lobby-page">
-      {/* Background orbs */}
-      <div className="orb orb-1" />
-      <div className="orb orb-2" />
-      <div className="orb orb-3" />
+    <>
+      <main className="lobby-page">
+        {/* Background orbs */}
+        <div className="orb orb-1" />
+        <div className="orb orb-2" />
+        <div className="orb orb-3" />
 
-      <div className="lobby-card">
-        {/* Logo */}
-        <div className="lobby-logo">
-          <h1 className="logo-title">Hubstream</h1>
-        </div>
-        <p className="lobby-subtitle">
-          {mode === 'sfu'
-            ? 'Crystal-clear video chat, powered by WebRTC SFU'
-            : 'Direct peer-to-peer video chat, no media server'}
-        </p>
-
-        {/* Mode selector */}
-        <div className="mode-selector">
-          <button
-            type="button"
-            className={`mode-btn ${mode === 'sfu' ? 'mode-btn--active' : ''}`}
-            onClick={() => setMode('sfu')}
-          >
-            SFU Mode
-            <span className="mode-btn-desc">Scalable · Server-routed</span>
-          </button>
-          <button
-            type="button"
-            className={`mode-btn ${mode === 'p2p' ? 'mode-btn--active' : ''}`}
-            onClick={() => setMode('p2p')}
-          >
-            Mesh P2P
-            <span className="mode-btn-desc">Direct · Browser-to-browser</span>
-          </button>
-        </div>
-
-        <form onSubmit={handleSubmit} className="lobby-form">
-          {/* Display name */}
-          <div className="form-group">
-            <label htmlFor="displayName" className="form-label">
-              Your Name
-            </label>
-            <div style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
-              {['🦫 Beaver', '🐹 Hamster', '🐨 Koala'].map((n) => (
-                <button
-                  key={n}
-                  type="button"
-                  onClick={() => setDisplayName(n)}
-                  style={{
-                    flex: 1, padding: '6px', background: 'rgba(255,255,255,0.05)',
-                    border: displayName === n ? '1px solid #6366f1' : '1px solid rgba(255,255,255,0.1)',
-                    borderRadius: '6px', color: '#fff', fontSize: '0.85rem', cursor: 'pointer', transition: 'all 0.2s'
-                  }}
-                >
-                  {n}
-                </button>
-              ))}
-            </div>
-            <input
-              id="displayName"
-              type="text"
-              placeholder="Enter your name…"
-              value={displayName}
-              onChange={(e) => setDisplayName(e.target.value)}
-              className="form-input"
-              maxLength={30}
-              required
-              autoFocus
-            />
+        <div className="lobby-card">
+          {/* Logo */}
+          <div className="lobby-logo">
+            <h1 className="logo-title">Hubstream</h1>
           </div>
+          <p className="lobby-subtitle">
+            {mode === "sfu"
+              ? "Crystal-clear video chat, powered by WebRTC SFU"
+              : "Direct peer-to-peer video chat, no media server"}
+          </p>
 
-          {/* Room ID */}
-          <div className="form-group">
-            <label htmlFor="roomId" className="form-label">
-              Room ID <span className="label-hint">(leave blank to create new)</span>
-            </label>
-            <div style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
-              {['1', '2', '3'].map((r) => (
-                <button
-                  key={r}
-                  type="button"
-                  onClick={() => setRoomId(r)}
-                  style={{
-                    flex: 1, padding: '6px', background: 'rgba(255,255,255,0.05)',
-                    border: roomId === r ? '1px solid #6366f1' : '1px solid rgba(255,255,255,0.1)',
-                    borderRadius: '6px', color: '#fff', fontSize: '0.85rem', cursor: 'pointer', transition: 'all 0.2s'
-                  }}
-                >
-                  {r}
-                </button>
-              ))}
-            </div>
-            <input
-              id="roomId"
-              type="text"
-              placeholder="e.g. abc12345"
-              value={roomId}
-              onChange={(e) => setRoomId(e.target.value)}
-              className="form-input"
-              maxLength={20}
-            />
-          </div>
-
-          <div className="lobby-actions">
+          {/* Mode selector */}
+          <div className="mode-selector">
             <button
-              type="submit"
-              className="btn btn-primary"
-              disabled={!displayName.trim() || isJoining}
+              type="button"
+              className={`mode-btn ${mode === "sfu" ? "mode-btn--active" : ""}`}
+              onClick={() => setMode("sfu")}
             >
-              {isJoining ? (
-                <span className="btn-loading">
-                  <span className="spinner" /> Joining…
-                </span>
-              ) : (
-                '→ Join Room'
-              )}
+              SFU Mode
+              <span className="mode-btn-desc">Scalable · Server-routed</span>
+            </button>
+            <button
+              type="button"
+              className={`mode-btn ${mode === "p2p" ? "mode-btn--active" : ""}`}
+              onClick={() => setMode("p2p")}
+            >
+              Mesh P2P
+              <span className="mode-btn-desc">Direct · Browser-to-browser</span>
             </button>
           </div>
-        </form>
 
-        <div className="lobby-features">
-          {features.map((f, idx) => (
-            <div key={idx} className="feature">
-              <span className="feature-label">{f.label}</span>
+          <form onSubmit={handleSubmit} className="lobby-form">
+            {/* Display name */}
+            <div className="form-group">
+              <label htmlFor="displayName" className="form-label">
+                Your Name
+              </label>
+              <div style={{ display: "flex", gap: "8px", marginBottom: "8px" }}>
+                {["🦫 Beaver", "🐹 Hamster", "🐨 Koala"].map((n) => (
+                  <button
+                    key={n}
+                    type="button"
+                    onClick={() => setDisplayName(n)}
+                    style={{
+                      flex: 1,
+                      padding: "6px",
+                      background: "rgba(255,255,255,0.05)",
+                      border:
+                        displayName === n
+                          ? "1px solid #6366f1"
+                          : "1px solid rgba(255,255,255,0.1)",
+                      borderRadius: "6px",
+                      color: "#fff",
+                      fontSize: "0.85rem",
+                      cursor: "pointer",
+                      transition: "all 0.2s",
+                    }}
+                  >
+                    {n}
+                  </button>
+                ))}
+              </div>
+              <input
+                id="displayName"
+                type="text"
+                placeholder="Enter your name…"
+                value={displayName}
+                onChange={(e) => setDisplayName(e.target.value)}
+                className="form-input"
+                maxLength={30}
+                required
+                autoFocus
+              />
             </div>
-          ))}
-        </div>
 
-        <div className="lobby-footer" style={{ textAlign: 'center', marginTop: '1.5rem' }}>
-          <a
-            href="https://github.com/yuchia329/hub_stream"
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{ color: 'var(--text-secondary, #94a3b8)', textDecoration: 'none', fontSize: '0.875rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
-            onMouseOver={(e) => e.currentTarget.style.textDecoration = 'underline'}
-            onMouseOut={(e) => e.currentTarget.style.textDecoration = 'none'}
+            {/* Room ID */}
+            <div className="form-group">
+              <label htmlFor="roomId" className="form-label">
+                Room ID{" "}
+                <span className="label-hint">(leave blank to create new)</span>
+              </label>
+              <div style={{ display: "flex", gap: "8px", marginBottom: "8px" }}>
+                {["1", "2", "3"].map((r) => (
+                  <button
+                    key={r}
+                    type="button"
+                    onClick={() => setRoomId(r)}
+                    style={{
+                      flex: 1,
+                      padding: "6px",
+                      background: "rgba(255,255,255,0.05)",
+                      border:
+                        roomId === r
+                          ? "1px solid #6366f1"
+                          : "1px solid rgba(255,255,255,0.1)",
+                      borderRadius: "6px",
+                      color: "#fff",
+                      fontSize: "0.85rem",
+                      cursor: "pointer",
+                      transition: "all 0.2s",
+                    }}
+                  >
+                    {r}
+                  </button>
+                ))}
+              </div>
+              <input
+                id="roomId"
+                type="text"
+                placeholder="e.g. abc12345"
+                value={roomId}
+                onChange={(e) => setRoomId(e.target.value)}
+                className="form-input"
+                maxLength={20}
+              />
+            </div>
+
+            <div className="lobby-actions">
+              <button
+                type="submit"
+                className="btn btn-primary"
+                disabled={!displayName.trim() || isJoining}
+              >
+                {isJoining ? (
+                  <span className="btn-loading">
+                    <span className="spinner" /> Joining…
+                  </span>
+                ) : (
+                  "→ Join Room"
+                )}
+              </button>
+            </div>
+          </form>
+
+          <div className="lobby-features">
+            {features.map((f, idx) => (
+              <div key={idx} className="feature">
+                <span className="feature-label">{f.label}</span>
+              </div>
+            ))}
+          </div>
+
+          <div
+            className="lobby-footer"
+            style={{ textAlign: "center", marginTop: "1.5rem" }}
           >
-            <svg height="16" aria-hidden="true" viewBox="0 0 16 16" version="1.1" width="16" fill="currentColor">
-              <path d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"></path>
-            </svg>
-            Source Code
-          </a>
+            <a
+              href="https://github.com/yuchia329/hub_stream"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                color: "var(--text-secondary, #94a3b8)",
+                textDecoration: "none",
+                fontSize: "0.875rem",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "6px",
+              }}
+              onMouseOver={(e) =>
+                (e.currentTarget.style.textDecoration = "underline")
+              }
+              onMouseOut={(e) =>
+                (e.currentTarget.style.textDecoration = "none")
+              }
+            >
+              <svg
+                height="16"
+                aria-hidden="true"
+                viewBox="0 0 16 16"
+                version="1.1"
+                width="16"
+                fill="currentColor"
+              >
+                <path d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"></path>
+              </svg>
+              Source Code
+            </a>
+          </div>
         </div>
-      </div>
-    </main>
+      </main>
+
+      {/* Footer */}
+      <footer className="w-full border-t border-white/5 bg-black/50 backdrop-blur-md">
+        <div className="max-w-6xl mx-auto px-6 py-6 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="flex-1 text-zinc-500 text-sm">
+            © 2026 Yuchia. All rights reserved.
+          </div>
+
+          <div className="flex items-center gap-5 text-zinc-400">
+            <a
+              href="https://yuchia.dev"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-zinc-100 transition-colors"
+              aria-label="Website"
+            >
+              <svg
+                className="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418"
+                />
+              </svg>
+            </a>
+            <a
+              href="https://github.com/yuchia329"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-zinc-100 transition-colors"
+              aria-label="GitHub"
+            >
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" />
+              </svg>
+            </a>
+            <a
+              href="https://www.linkedin.com/in/yuchia-chang-1b5058177/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-zinc-100 transition-colors"
+              aria-label="LinkedIn"
+            >
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+              </svg>
+            </a>
+            <a
+              href="mailto:yuchia.chang@outlook.com"
+              className="hover:text-zinc-100 transition-colors"
+              aria-label="Email"
+            >
+              <svg
+                className="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"
+                />
+              </svg>
+            </a>
+          </div>
+        </div>
+      </footer>
+    </>
   );
 }
